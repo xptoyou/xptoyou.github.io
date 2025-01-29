@@ -1,1 +1,1 @@
-xptoyou.github.io/oo/
+xptoyou.github.io
