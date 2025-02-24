@@ -3,17 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Level Browser</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .level-list { margin-top: 20px; }
+        .level-item { margin: 5px; padding: 10px; border: 1px solid black; display: inline-block; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to My Home Web</h1>
-        <div class="links">
-            <a href=" https://xptoyou.github.io/sen/" target="_blank">sen</a>
-            <a href=" https://xptoyou.github.io/seif-web/" target="_blank">seif-web</a>
-            <a href=" https://xptoyou.github.io/sunline/" target="_blank">sunline</a>
-        </div>
-    </div>
+    <h1>Level Browser</h1>
+    <div class="level-list" id="levelList">Loading levels...</div>
+    
+    <script>
+        fetch("levels.json")
+            .then(response => response.json())
+            .then(levels => {
+                const levelList = document.getElementById("levelList");
+                levelList.innerHTML = "";
+                Object.keys(levels).forEach(levelId => {
+                    const levelItem = document.createElement("div");
+                    levelItem.classList.add("level-item");
+                    levelItem.innerHTML = `<a href='level.html?id=${levelId}'>Play Level ${levelId}</a>`;
+                    levelList.appendChild(levelItem);
+                });
+            })
+            .catch(error => {
+                document.getElementById("levelList").innerHTML = "Error loading levels.";
+            });
+    </script>
 </body>
 </html>
