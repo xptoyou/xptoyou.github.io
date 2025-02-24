@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .level-list, .followed-users { margin-top: 20px; }
+        .level-item, .user-item { margin: 5px; padding: 10px; border: 1px solid black; display: inline-block; }
+        button { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <p id="username">Loading...</p>
+    <button onclick="followUser()">Follow</button>
+    
+    <h2>Your Levels</h2>
+    <div class="level-list" id="levelList">Loading levels...</div>
+    
+    <h2>Followed Users</h2>
+    <div class="followed-users" id="followedUsers">No followed users.</div>
+    
+    <script>
+        const nickname = localStorage.getItem("nickname") || "Guest";
+        document.getElementById("username").textContent = `Nickname: ${nickname}`;
+        
+        function followUser() {
+            const profileUser = nickname;
+            let followedUsers = JSON.parse(localStorage.getItem("followedUsers")) || [];
+            if (!followedUsers.includes(profileUser)) {
+                followedUsers.push(profileUser);
+                localStorage.setItem("followedUsers", JSON.stringify(followedUsers));
+                alert(`You are now following ${profileUser}`);
+                loadFollowedUsers();
+            } else {
+                alert(`You are already following ${profileUser}`);
+            }
+        }
+        
+        function loadFollowedUsers() {
+            let followedUsers = JSON.parse(localStorage.getItem("followedUsers")) || [];
+            const followedUsersDiv = document.getElementById("followedUsers");
+            followedUsersDiv.innerHTML = followedUsers.length ? followedUsers.map(user => `<div class='user-item'>${user}</div>`).join('') : "No followed users.";
+        }
+        
+        fetch("levels.json")
+            .then(response => response.json())
+            .then(levels => {
+                const levelList = document.getElementById("levelList");
+                levelList.innerHTML = "";
+                Object.keys(levels).forEach(levelId => {
+                    if (levels[levelId].nickname === nickname) {
+                        const levelItem = document.createElement("div");
+                        levelItem.classList.add("level-item");
+                        levelItem.innerHTML = `<a href='level.html?id=${levelId}'>Play Level ${levelId}</a>`;
+                        levelList.appendChild(levelItem);
+                    }
+                });
+                if (levelList.innerHTML === "") {
+                    levelList.innerHTML = "No levels found.";
+                }
+            })
+            .catch(error => {
+                document.getElementById("levelList").innerHTML = "Error loading levels.";
+            });
+        
+        loadFollowedUsers();
+    </script>
+</body>
+</html>
