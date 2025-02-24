@@ -29,6 +29,8 @@
     <h1>Level Viewer</h1>
     <p id="message">Loading level...</p>
     <div class="grid" id="levelGrid"></div>
+    <h2>Level Video</h2>
+    <video id="levelVideo" width="400" controls style="display:none;"></video>
     
     <script>
         // Get level ID from URL
@@ -51,7 +53,7 @@
                     const grid = document.getElementById("levelGrid");
                     grid.innerHTML = ""; // Clear grid
                     
-                    levelData.forEach(row => {
+                    levelData.tiles.forEach(row => {
                         row.forEach(tile => {
                             const tileElement = document.createElement("div");
                             tileElement.classList.add("tile");
@@ -60,6 +62,13 @@
                             grid.appendChild(tileElement);
                         });
                     });
+                    
+                    // Load video if available
+                    if (levelData.video && levelData.video !== "None") {
+                        const videoElement = document.getElementById("levelVideo");
+                        videoElement.src = levelData.video;
+                        videoElement.style.display = "block";
+                    }
                 })
                 .catch(error => {
                     document.getElementById("message").textContent = "Error loading levels.";
@@ -68,3 +77,4 @@
     </script>
 </body>
 </html>
+
